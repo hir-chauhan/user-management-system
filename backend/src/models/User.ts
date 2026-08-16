@@ -53,22 +53,14 @@ const UserSchema = new Schema<IUser>(
     password: {
       type: String,
       required: [true, 'Password is required'],
-      select: false, // Do not expose password by default
+      select: false,
     },
   },
   {
     timestamps: true,
-    toJSON: {
-      transform: (_doc, ret: Record<string, any>) => {
-        delete ret.password;
-        delete ret.__v;
-        return ret;
-      },
-    },
   }
 );
 
-// Hash password before saving
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password') || !this.password) {
     return next();
@@ -83,7 +75,6 @@ UserSchema.pre('save', async function (next) {
   }
 });
 
-// Compare password method
 UserSchema.methods.comparePassword = async function (
   candidatePassword: string
 ): Promise<boolean> {
