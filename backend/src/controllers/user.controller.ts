@@ -39,7 +39,7 @@ export const getUsers = async (req: Request, res: Response) => {
     }
 
     const sortDirection = sortOrder === "asc" ? 1 : -1;
-    const sortField = (sortBy as string);
+    const sortField = sortBy as string;
     const sort: any = { [sortField]: sortDirection };
 
     const users = await User.find(filter)
@@ -135,11 +135,15 @@ export const createUser = async (req: Request, res: Response) => {
 
     await newUser.save();
 
+    const userResponse = newUser.toObject();
+
+    delete userResponse.password;
+
     return sendSuccess({
       res,
       statusCode: 201,
       message: "User created successfully",
-      data: newUser,
+      data: userResponse,
     });
   } catch (error: any) {
     return sendError({
@@ -175,7 +179,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
     if (email && email.toLowerCase() !== user.email.toLowerCase()) {
       const emailExists = await User.findOne({ email: email.toLowerCase() });
-      
+
       if (emailExists) {
         return sendError({
           res,
@@ -223,6 +227,39 @@ export const updateUser = async (req: Request, res: Response) => {
       res,
       statusCode: 500,
       message: error.message || "Failed to update user",
+    });
+  }
+};
+
+export const getUserStats = async (req: Request, res: Response) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const activeUsers = await User.countDocuments({
+      status: "Active",
+    });
+    const adminUsers = await User.countDocuments({
+      role: "Admin",
+    });
+    const inactiveUsers = await User.countDocuments({
+      status: "Inactive",
+    });
+
+    return sendSuccess({
+      res,
+      statusCode: 200,
+      message: "User statistics fetched successfully",
+      data: {
+        totalUsers,
+        activeUsers,
+        adminUsers,
+        inactiveUsers,
+      },
+    });
+  } catch (error: any) {
+    return sendError({
+      res,
+      statusCode: 500,
+      message: error.message || "Failed to fetch user statistics",
     });
   }
 };

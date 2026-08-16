@@ -58,7 +58,7 @@ export const login = async (req: Request, res: Response) => {
     return sendSuccess({
       res,
       statusCode: 200,
-      message: "Login successful",
+      message: "User Login successful",
       data: {
         token,
         user: userData,
