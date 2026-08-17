@@ -331,6 +331,6 @@ All user endpoints require the `Authorization` header: `Bearer <token>`.
 
 ## 📸 12. Live Demo
 
-- **Live Deployment Link**: *(Add your deployed Vercel / Render / Netlify link here)*
+- **Live Deployment Link**: https://user-management-system-cyan-ten.vercel.app/login
 
 ---
