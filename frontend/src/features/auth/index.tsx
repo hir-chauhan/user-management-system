@@ -86,7 +86,7 @@ export function LoginPage() {
           </CardHeader>
 
           <CardContent className="p-0">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-foreground">
                   Email Address

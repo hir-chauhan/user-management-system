@@ -168,7 +168,7 @@ export function UserFormDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5 py-1">
+        <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-3.5 py-1">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <label className="text-xs font-semibold text-foreground">
@@ -230,6 +230,11 @@ export function UserFormDialog({
               {...register("phone")}
               disabled={isLoading}
             />
+            {errors.phone && (
+              <p className="text-[11px] text-destructive">
+                {errors.phone.message}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
