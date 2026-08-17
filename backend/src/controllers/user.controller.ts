@@ -22,11 +22,45 @@ export const getUsers = async (req: Request, res: Response) => {
     const filter: any = {};
 
     if (search) {
-      const searchRegex = new RegExp((search as string).trim(), "i");
+      const searchStr = (search as string).trim();
+      const escaped = searchStr.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const searchRegex = new RegExp(escaped, "i");
+
+      const words = searchStr.split(/\s+/).filter(Boolean);
+      const wordConditions = words.map((word) => {
+        const wordRegex = new RegExp(
+          word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+          "i"
+        );
+        return {
+          $or: [
+            { firstName: wordRegex },
+            { lastName: wordRegex },
+            { email: wordRegex },
+          ],
+        };
+      });
+
       filter.$or = [
         { firstName: searchRegex },
         { lastName: searchRegex },
         { email: searchRegex },
+        {
+          $expr: {
+            $regexMatch: {
+              input: {
+                $concat: [
+                  { $ifNull: ["$firstName", ""] },
+                  " ",
+                  { $ifNull: ["$lastName", ""] },
+                ],
+              },
+              regex: escaped,
+              options: "i",
+            },
+          },
+        },
+        ...(words.length > 1 ? [{ $and: wordConditions }] : []),
       ];
     }
 
