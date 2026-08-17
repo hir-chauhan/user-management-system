@@ -3,7 +3,6 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-import { connectDB } from './config/db.js';
 import apiRoutes from './routes/index.js';
 import { errorHandler } from './middleware/error.middleware.js';
 import { sendError } from './utils/apiResponse.js';
@@ -19,8 +18,6 @@ const allowedOrigins = [
   process.env.CLIENT_URL,
 ].filter(Boolean);
 
-connectDB();
-
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -34,15 +31,11 @@ app.use(
 
       return callback(new Error("Not allowed by CORS"));
     },
-
     credentials: true,
-
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-
     allowedHeaders: ["Content-Type", "Authorization"],
-  }),
+  })
 );
-
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -64,8 +57,10 @@ app.use((_req: Request, res: Response) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
+}
 
 export default app;

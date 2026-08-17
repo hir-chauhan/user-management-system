@@ -1,19 +1,26 @@
 import mongoose from "mongoose";
 
+let isConnected = false;
+
 export const connectDB = async () => {
+  if (isConnected) {
+    return;
+  }
+
   try {
     const mongoUri = process.env.MONGODB_URI;
 
     if (!mongoUri) {
-      console.log("MongoDB URI is missing");
-      process.exit(1);
+      throw new Error("MONGODB URI is missing");
     }
 
     await mongoose.connect(mongoUri);
 
+    isConnected = true;
+
     console.log("MongoDB connected successfully");
   } catch (error) {
-    console.log("MongoDB connection error:", error);
-    process.exit(1);
+    console.error("MongoDB connection error:", error);
+    throw error;
   }
 };
