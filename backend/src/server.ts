@@ -18,7 +18,7 @@ connectDB();
 
 app.use(
   cors({
-    origin: [CLIENT_URL, 'http://localhost:5173'],
+    origin: "https://user-management-system-cyan-ten.vercel.app",
     credentials: true,
   })
 );
